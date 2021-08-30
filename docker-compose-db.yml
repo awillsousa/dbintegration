@@ -1,23 +1,6 @@
 version: '3'
 
 services:
-  dbiapp:
-    build:
-      context: .
-      dockerfile: ./app/Dockerfile
-    restart: always
-    volumes:
-      - .:/code
-    ports:
-      - "8080:8080"
-    expose:
-      # Opens port 8081 on the container
-      - '8081'
-    networks:
-      - dbintegration-compose-network
-    env_file:
-      - .env.dev
-
   postgres:
     image: postgres
     environment:
