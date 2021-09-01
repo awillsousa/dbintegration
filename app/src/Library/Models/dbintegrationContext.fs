@@ -92,7 +92,8 @@ type dbintegrationContext =
                 .HasForeignKey([| "SecondCurrencyId" |])
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_CurrenyID_2")
-                |> ignore*)
+                |> ignore
+            *)
         ) |> ignore
 
         modelBuilder.Entity<Provider>(fun entity ->
@@ -131,8 +132,6 @@ type dbintegrationContext =
                 .HasColumnType("date")
                 |> ignore
 
-
-
             entity.Property(fun e -> e.Price)
                 |> ignore
 
@@ -140,6 +139,7 @@ type dbintegrationContext =
                 .HasColumnName("ProviderID")
                 |> ignore
 
+            (*
             entity.HasOne(fun d -> d.CurrencyPair)
                 .WithMany("RateRecords")
                 .HasForeignKey([| "CurrencyPairId" |])
@@ -153,6 +153,7 @@ type dbintegrationContext =
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ProviderID")
                 |> ignore
+            *)
         ) |> ignore
 
         modelBuilder.Entity<TradeRecord>(fun entity ->

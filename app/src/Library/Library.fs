@@ -7,7 +7,7 @@ open DBILib.Models.dbintegrationDomain
 open DBILib.CompositionRoot
 open DBILib.dbintegrationValidation
 open System.Collections.Generic
-
+open Newtonsoft.Json
 
 (******************************)
 (*      Helper functions      *)
@@ -23,6 +23,26 @@ let createResponseRecord (r:string, msg:obj, data:obj) =
     r
 
 
+//let json = Newtonsoft.Json.JsonSerializer.Create()
+//let! json.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+
+let serializeResult r =
+    (*
+    let options = JsonSerializerOptions(MaxDepth = 1,
+                                        IgnoreNullValues = true,
+                                        IgnoreReadOnlyProperties = true)
+    JsonSerializer.Serialize(r, options, Formatting.Indented)
+    *)
+
+    let options = JsonSerializerSettings()
+    options.ReferenceLoopHandling <- ReferenceLoopHandling.Ignore
+    options.Formatting <- Formatting.Indented
+    options.MaxDepth <- 1
+    //let json = Newtonsoft.Json.JsonSerializer.Create(options)
+    //json.Serialize(r)
+    JsonConvert.SerializeObject(r, options)
+
+
 (******************************)
 (* Provider related functions *)
 (******************************)
@@ -34,10 +54,10 @@ let findProvider id =
         let result = match providerData with
                         | None -> createResponseRecord ("ok", ["No data found!"],[])
                         | Some(providerData) -> createResponseRecord ("ok", [""], [providerData])
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Return all providers in the database
@@ -47,10 +67,10 @@ let allProviders =
         let result = match providerData.Length with
                         | 0 -> createResponseRecord ("ok", "No data found!", [])
                         | _ -> createResponseRecord ("ok", "", providerData)
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Insert a provider instance
@@ -69,11 +89,11 @@ let insertProvider (name:string, shortname:string, description:string) =
                                             | Some(p) -> createResponseRecord ("ok", "Provider inserted with success!", None)
                                             | None -> createResponseRecord ("error", "Error when inserting data!", None)
         // Serialize the result
-        let jsonresult = JsonSerializer.Serialize(result)
+        let jsonresult = serializeResult(result)
         jsonresult
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Update a provider instance
@@ -84,7 +104,7 @@ let changeProvider providerid name shortname description =
         let result = match r with
                         | None -> createResponseRecord("error", "Error when updating data!", None)
                         | _ -> createResponseRecord("ok", "Provider updated with success!", None)
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
         *)
         // Validate the provider record field values if all is OK
         // create a provider record
@@ -104,11 +124,11 @@ let changeProvider providerid name shortname description =
                                 | Some(providerInstance) -> createResponseRecord ("error", "Provider already exists!", None)
 
         // Serialize the result
-        let jsonresult = JsonSerializer.Serialize(result)
+        let jsonresult = serializeResult(result)
         jsonresult
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Exclude one provider
@@ -119,10 +139,20 @@ let excludeProvider id =
                         | None -> createResponseRecord("error", "Provider does not exist in database!", None)
                         | Some p -> if delProvider(p) = None then createResponseRecord("error", "No data deleted!", null)
                                     else createResponseRecord("ok", "Provider deleted!", None)
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+
+let removeAllProviders =
+    try
+        let result = match delAllProviders with
+                        | Error e -> createResponseRecord("error", "No data deleted!", None)
+                        | Ok s -> createResponseRecord("ok", "All Providers deleted!", None)
+        serializeResult(result)
+    with
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 (******************************)
@@ -135,10 +165,10 @@ let findCurrency id =
         let result = match currencyData with
                         | None -> createResponseRecord("ok", "No data found!", [])
                         | Some(providerData) -> createResponseRecord("ok", "", [currencyData])
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Return all providers in the database
@@ -148,10 +178,10 @@ let allCurrencies =
         let result = match currencyData.Length with
                         | 0 -> createResponseRecord("ok", "No data found!", [])
                         | _ -> createResponseRecord("ok", "", [currencyData])
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Insert a provider instance
@@ -169,10 +199,10 @@ let insertCurrency (alias:string, name:string, symbol:string) =
                      | Ok currencyRec -> match addCurrency currencyRec with
                                             | Some(p) -> createResponseRecord ("ok", "Provider inserted with success!", None)
                                             | None -> createResponseRecord ("error", "Error when inserting data!", None)
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Update a provider instance
@@ -182,10 +212,10 @@ let changeCurrency p =
         let result = match r with
                         | None -> {Result = "error"; Msg="Error when updating data!"; Data=None}
                         | _ -> {Result = "ok"; Msg="Currency updated with success!"; Data=None}
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Exclude one provider
@@ -196,10 +226,10 @@ let excludeCurrency id =
                         | None -> {Result = "error"; Msg = "Currency does not exist in database!"; Data = None}
                         | Some currency -> if delCurrency(currency) = None then {Result = "error"; Msg = "No data deleted!"; Data = null}
                                            else {Result = "ok"; Msg = "Currency deleted!"; Data = None }
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 
@@ -214,10 +244,10 @@ let findCurrencyPair id =
         let result = match currencyPairData with
                         | None -> createResponseRecord("ok", "No data found!", [])
                         | Some(currencyPairData) -> createResponseRecord("ok", "", [currencyPairData])
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Return all CurrencyPairs in the database
@@ -227,10 +257,10 @@ let allCurrencyPairs =
         let result = match currencyPairData.Length with
                         | 0 -> createResponseRecord("ok", "No data found!", [])
                         | _ -> createResponseRecord("ok", "", currencyPairData)
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Insert a CurrencyPair instance
@@ -244,10 +274,10 @@ let insertCurrencyPair (alias:string, firstcurrencyid:int64, secondcurrencyid:in
                      | Ok currencyPair -> match addCurrencyPair currencyPair with
                                             | Some(p) -> createResponseRecord ("ok", "Currency Pair inserted with success!", None)
                                             | None -> createResponseRecord ("error", "Error when inserting data!", None)
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Update a CurrencyPair instance
@@ -257,10 +287,10 @@ let changeCurrencyPair p =
         let result = match r with
                         | None -> createResponseRecord("error", "Error when updating data!", None)
                         | _ -> createResponseRecord("ok", "Currency Pair updated with success!", None)
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Exclude one CurrencyPair
@@ -271,10 +301,10 @@ let excludeCurrencyPair id =
                         | None -> createResponseRecord("error", "Currency Pair does not exist in database!", None)
                         | Some p -> if delCurrencyPair(p) = None then createResponseRecord("error", "No data deleted!", null)
                                     else createResponseRecord("ok", "Currency Pair deleted!", None)
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 (********************************)
@@ -287,10 +317,10 @@ let findRateRecord id =
         let result = match rateRecordData with
                         | None -> createResponseRecord("ok", "No data found!", [])
                         | Some(rateRecordData) -> createResponseRecord("ok", "",[rateRecordData])
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 // Return all RateRecords in the database
 let allRateRecords =
@@ -299,26 +329,26 @@ let allRateRecords =
         let result = match rateRecordData.Length with
                         | 0 -> createResponseRecord("ok", "No data found!", [])
                         | _ -> createResponseRecord("ok", "", [rateRecordData])
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 
 // Find all RateRecords by Provider
 let findRateRecordbyProvider providerId =
     try
-        let providerSome = getProvider providerId
-        let providerData = providerSome.Value
-        let mutable rateRecords = providerData.RateRecords
-        let result = match rateRecords.Count with
+        //let providerSome = getProvider providerId
+        //let providerData = providerSome.Value
+        let rateRecords = getRateRecordsbyProvider providerId
+        let result = match rateRecords.Length with
                         | 0 -> createResponseRecord("ok", "No data found!", [])
                         | _ -> createResponseRecord("ok", "", [rateRecords])
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 // Filter RateRecords
 let filterRateRecord providerId currencyPairId startDate endDate startPrice endPrice =
@@ -327,10 +357,10 @@ let filterRateRecord providerId currencyPairId startDate endDate startPrice endP
         let result = match rateRecords.Length with
                         | 0 -> {Result = "ok"; Msg = "No data found!"; Data=[]}
                         | _ -> {Result = "ok"; Msg=""; Data = [rateRecords]}
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 // Insert a RateRecord
 let insertRateRecord (currencypairid:int64, datetimerate:string, price:decimal, providerid:int64) =
@@ -358,10 +388,10 @@ let insertRateRecord (currencypairid:int64, datetimerate:string, price:decimal, 
                      | Ok p -> match addRateRecord p with
                                | None -> createResponseRecord ("error", "Error when inserting data!", None)
                                | _ -> createResponseRecord ("ok", "Rate Record inserted with success!", None)
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 // Change a RateRecord
 let changeRateRecord p =
@@ -370,10 +400,10 @@ let changeRateRecord p =
         let result = match r with
                         | None -> {Result = "error"; Msg="Error when updating data!"; Data=None}
                         | _ -> {Result = "ok"; Msg="Rate Record updated with success!"; Data=None}
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 // Exclude RateRecord
 let excludeRateRecord id =
@@ -383,10 +413,10 @@ let excludeRateRecord id =
                         | None -> {Result = "error"; Msg = "Rate Record does not exist in database!"; Data = None}
                         | Some p -> if delRateRecord(p) = None then {Result = "error"; Msg = "No data deleted!"; Data = null}
                                     else {Result = "ok"; Msg = "Rate Record deleted!"; Data = None }
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 
@@ -401,10 +431,24 @@ let findTradeRecord id =
         let result = match tradeRecordData with
                         | None -> {Result = "ok"; Msg = "No data found!"; Data=[]}
                         | Some(tradeRecordData) -> {Result = "ok"; Msg=""; Data = [tradeRecordData]}
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+
+// Return all RateRecords in the database
+let allTradeRecords =
+    try
+        let tradeRecordData = getAllTradeRecords
+        let result = match tradeRecordData.Length with
+                        | 0 -> createResponseRecord("ok", "No data found!", [])
+                        | _ -> createResponseRecord("ok", "", [tradeRecordData])
+        serializeResult(result)
+    with
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+
+
 
 // Insert a TradeRecord
 let insertTradeRecord (currencypairid:int64, datetimetransaction:string, quantity:int64, traderateid:int64, typetransaction:string) =
@@ -422,10 +466,10 @@ let insertTradeRecord (currencypairid:int64, datetimetransaction:string, quantit
         let result = match r with
                         | None -> {Result = "error"; Msg="Error when inserting data!"; Data=None}
                         | _ -> {Result = "ok"; Msg="Trade Record inserted with success!"; Data=None}
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 // Update a TradeRecord
 let changeTradeRecord p =
@@ -434,10 +478,10 @@ let changeTradeRecord p =
         let result = match r with
                         | None -> {Result = "error"; Msg="Error when updating data!"; Data=None}
                         | _ -> {Result = "ok"; Msg="Trade Record updated with success!"; Data=None}
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 // Exclude a TradeRecord
 let excludeTradeRecord id =
@@ -447,8 +491,8 @@ let excludeTradeRecord id =
                         | None -> {Result = "error"; Msg = "Trade Record does not exist in database!"; Data = None}
                         | Some p -> if delTradeRecord(p) = None then {Result = "error"; Msg = "No data deleted!"; Data = null}
                                     else {Result = "ok"; Msg = "Trade Record deleted!"; Data = None }
-        JsonSerializer.Serialize(result)
+        serializeResult(result)
     with
-        | :? System.InvalidOperationException as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> JsonSerializer.Serialize(createResponseRecord("exception", ex.Message, None))
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 

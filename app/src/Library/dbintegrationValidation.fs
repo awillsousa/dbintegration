@@ -4,6 +4,7 @@ open System
 open System.Collections.Generic
 open DBILib.CompositionRoot
 open DBILib.Models.dbintegrationDomain
+open System.Globalization
 
 module dbintegrationValidation =
 
@@ -48,7 +49,12 @@ module dbintegrationValidation =
         }
 
         if (Seq.isEmpty errors) then
-            Ok { ProviderId = idprovider; Name = name; ShortName = shortname; Description = description; RateRecords =  List<RateRecord>([]) }
+            Ok { ProviderId = idprovider;
+                 Name = name;
+                 ShortName = shortname;
+                 Description = description;
+                 RateRecords =  List<RateRecord>([])
+               }
         else
             Error errors
 
@@ -73,8 +79,8 @@ module dbintegrationValidation =
                  Name = name;
                  Alias = alias;
                  Symbol = symbol;
-                 //CurrencyPairFirstCurrencies =  List<CurrencyPair>([]);
-                 //CurrencyPairSecondCurrencies = List<CurrencyPair>([])
+                 CurrencyPairFirstCurrencies =  List<CurrencyPair>([]);
+                 CurrencyPairSecondCurrencies = List<CurrencyPair>([])
                }
         else
             Error errors
@@ -103,8 +109,8 @@ module dbintegrationValidation =
                  Alias = alias;
                  FirstCurrencyId = firstcurrencyid;
                  SecondCurrencyId = secondcurrencyid;
-                 //FirstCurrency = relatedFirstCurr.Value;
-                 //SecondCurrency = relatedSecondCurr.Value;
+                 FirstCurrency = relatedFirstCurr.Value;
+                 SecondCurrency = relatedSecondCurr.Value;
                  RateRecords = List<RateRecord>()
                 }
 
@@ -130,10 +136,12 @@ module dbintegrationValidation =
         }
 
         if (Seq.isEmpty errors) then
+            let format = "dd/MM/yyyy HH:mm:ss.ffffff"
+            let provider = CultureInfo.InvariantCulture;
+
             Ok { RateRecordId = idraterecord;
                  CurrencyPairId = currencypairid;
-                 DateTimeRate = DateTimeOffset(System.DateTime.Parse(datetimerate));
-
+                 DateTimeRate = System.DateTime.ParseExact(datetimerate, format, provider);
                  Price = price;
                  ProviderId = providerid;
                  TradeRecords = List<TradeRecord>()

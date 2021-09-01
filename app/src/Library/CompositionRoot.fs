@@ -11,7 +11,6 @@ module CompositionRoot =
     let configureContext =
         (fun () ->
             let optionsBuilder = new DbContextOptionsBuilder<dbintegrationContext>();
-            //optionsBuilder.UseNpgsql("Host=localhost;Port=15432;Database=fseftest;Username=dbintegration;Password=fD$#d143da") |> ignore
             optionsBuilder.UseNpgsql(Config.getEnvVar  "STRCONNECT_DB" ) |> ignore
             new dbintegrationContext(optionsBuilder.Options)
         )
@@ -23,6 +22,7 @@ module CompositionRoot =
     let getAllProviders = dbintegrationRepository.getAllProviders getContext
     let addProvider = dbintegrationRepository.addProvider getContext
     let delProvider = dbintegrationRepository.deleteProvider getContext
+    let delAllProviders = dbintegrationRepository.deleteAllProviders getContext
     let updateProvider = dbintegrationRepository.updateProvider getContext
 
     // Simple alias Currency functions
@@ -46,6 +46,7 @@ module CompositionRoot =
     let addRateRecord = dbintegrationRepository.addRateRecord getContext
     let delRateRecord = dbintegrationRepository.deleteRateRecord getContext
     let updateRateRecord = dbintegrationRepository.updateRateRecord getContext
+    let getRateRecordsbyProvider = dbintegrationRepository.getRateRecordsbyProvider getContext
 
     // Simple alias RateRecord functions
     let getTradeRecord  = dbintegrationRepository.getTradeRecord getContext

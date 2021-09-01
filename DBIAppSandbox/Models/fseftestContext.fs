@@ -1,19 +1,20 @@
-﻿namespace DBILib.Models
+﻿namespace FsEfTest.Models
 
 open System
 open System.Collections.Generic
 open Microsoft.EntityFrameworkCore
 open Microsoft.EntityFrameworkCore.Metadata
 open EntityFrameworkCore.FSharp.Extensions
-open dbintegrationDomain
 
-type dbintegrationContext =
+open fseftestDomain
+
+type fseftestContext =
     inherit DbContext
 
     new() = { inherit DbContext() }
-    new(options : DbContextOptions<dbintegrationContext>) =
+    new(options : DbContextOptions<fseftestContext>) =
         { inherit DbContext(options) }
-    
+
     [<DefaultValue>] val mutable private _Currencies : DbSet<Currency>
     member this.Currencies with get() = this._Currencies and set v = this._Currencies <- v
 
@@ -28,19 +29,20 @@ type dbintegrationContext =
 
     [<DefaultValue>] val mutable private _TradeRecords : DbSet<TradeRecord>
     member this.TradeRecords with get() = this._TradeRecords and set v = this._TradeRecords <- v
-    
-    (*
-    override this.OnConfiguring(optionsBuilder: DbContextOptionsBuilder) =        
-        if not optionsBuilder.IsConfigured then            //optionsBuilder.UseNpgsql("Host=localhost;Port=15432;Database=fseftest;Username=dbintegration;Password=fD$#d143da") |> ignore            
-            optionsBuilder.UseNpgsql(DBILib.Config.getEnvVar "STRCONNECT_DB") |> ignore
-            ()
-    *)
-    override this.OnModelCreating(modelBuilder: ModelBuilder) =
-        base.OnModelCreating(modelBuilder)        
-        modelBuilder.HasAnnotation("Relational:Collation", "en_US.utf8") |> ignore
-        modelBuilder.UseSerialColumns() |> ignore
 
-        
+
+    override this.OnConfiguring(optionsBuilder: DbContextOptionsBuilder) =
+        if not optionsBuilder.IsConfigured then
+            optionsBuilder.UseNpgsql("Host=localhost;Port=15432;Database=fseftest;Username=dbintegration;Password=fD$#d143da") |> ignore
+            ()
+
+    override this.OnModelCreating(modelBuilder: ModelBuilder) =
+        base.OnModelCreating(modelBuilder)
+
+        modelBuilder.HasAnnotation("Relational:Collation", "en_US.utf8")
+            |> ignore
+
+
         modelBuilder.Entity<Currency>(fun entity ->
 
             entity.ToTable("Currency")
@@ -63,6 +65,12 @@ type dbintegrationContext =
         modelBuilder.Entity<CurrencyPair>(fun entity ->
 
             entity.ToTable("CurrencyPair")
+                |> ignore
+
+            entity.HasIndex((fun e -> e.FirstCurrencyId :> obj), "IX_CurrencyPair_FirstCurrencyID")
+                |> ignore
+
+            entity.HasIndex((fun e -> e.SecondCurrencyId :> obj), "IX_CurrencyPair_SecondCurrencyID")
                 |> ignore
 
             entity.Property(fun e -> e.CurrencyPairId)
@@ -119,6 +127,12 @@ type dbintegrationContext =
             entity.ToTable("RateRecord")
                 |> ignore
 
+            entity.HasIndex((fun e -> e.CurrencyPairId :> obj), "IX_RateRecord_CurrencyPairID")
+                |> ignore
+
+            entity.HasIndex((fun e -> e.ProviderId :> obj), "IX_RateRecord_ProviderID")
+                |> ignore
+
             entity.Property(fun e -> e.RateRecordId)
                 .HasColumnName("RateRecordID")
                 |> ignore
@@ -128,10 +142,7 @@ type dbintegrationContext =
                 |> ignore
 
             entity.Property(fun e -> e.DateTimeRate)
-                .HasColumnType("date")
                 |> ignore
-
-
 
             entity.Property(fun e -> e.Price)
                 |> ignore
@@ -160,6 +171,9 @@ type dbintegrationContext =
             entity.ToTable("TradeRecord")
                 |> ignore
 
+            entity.HasIndex((fun e -> e.TradeRateId :> obj), "IX_TradeRecord_TradeRateID")
+                |> ignore
+
             entity.Property(fun e -> e.TradeRecordId)
                 .HasColumnName("TradeRecordID")
                 |> ignore
@@ -171,7 +185,6 @@ type dbintegrationContext =
                 |> ignore
 
             entity.Property(fun e -> e.TradeRateId)
-                .ValueGeneratedOnAdd()
                 .HasColumnName("TradeRateID")
                 |> ignore
 
@@ -186,5 +199,4 @@ type dbintegrationContext =
                 |> ignore
         ) |> ignore
 
-        
         modelBuilder.RegisterOptionTypes()
