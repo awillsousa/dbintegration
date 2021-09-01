@@ -1,23 +1,25 @@
-﻿namespace DBILib.Models
+﻿namespace FsEfTest.Models
 
 open System
 open System.Collections.Generic
-open System.ComponentModel.DataAnnotations
-open System.ComponentModel.DataAnnotations.Schema
-
 
 module rec dbintegrationDomain =
 
-
+    (*[<CLIMutable>]
+    type Contact = {
+        Id: Int64
+        Email: string
+        Firstname: string
+        Lastname: string
+    }*)
     [<CLIMutable>]
     type Currency = {
-        [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
         CurrencyId: Int64
         Alias: string
         Name: string
         Symbol: string
-        //CurrencyPairFirstCurrencies: ICollection<CurrencyPair>
-        //CurrencyPairSecondCurrencies: ICollection<CurrencyPair>
+        CurrencyPairFirstCurrencies: ICollection<CurrencyPair>
+        CurrencyPairSecondCurrencies: ICollection<CurrencyPair>
     }
 
     [<CLIMutable>]
@@ -26,8 +28,8 @@ module rec dbintegrationDomain =
         Alias: string
         FirstCurrencyId: Int64
         SecondCurrencyId: Int64
-        //FirstCurrency: Currency
-        //SecondCurrency: Currency
+        FirstCurrency: Currency
+        SecondCurrency: Currency
         RateRecords: ICollection<RateRecord>
     }
 
@@ -40,12 +42,11 @@ module rec dbintegrationDomain =
         RateRecords: ICollection<RateRecord>
     }
 
-
     [<CLIMutable>]
     type RateRecord = {
         RateRecordId: Int64
         CurrencyPairId: Int64
-        DateTimeRate: DateTimeOffset
+        DateTimeRate: DateTime
         Price: decimal
         ProviderId: Int64
         CurrencyPair: CurrencyPair
@@ -53,13 +54,23 @@ module rec dbintegrationDomain =
         TradeRecords: ICollection<TradeRecord>
     }
 
-
     [<CLIMutable>]
     type TradeRecord = {
         TradeRecordId: Int64
-        DateTimeTransaction: DateTimeOffset
+        DateTimeTransaction: DateTime
         Quantity: Int64
         TradeRateId: Int64
         TypeTransaction: string
         TradeRate: RateRecord
     }
+    (*
+    [<CLIMutable>]
+    type User = {
+        UserId: int
+        Active: bool option
+        Email: string
+        FirstName: string
+        LastName: string
+        Username: string
+    }
+    *)

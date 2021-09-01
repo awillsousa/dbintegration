@@ -1,17 +1,18 @@
 namespace DBILib
 
-module CompositionRoot =
+
+module CompositionRoot = 
 
     open DBILib.Models
     open Microsoft.EntityFrameworkCore
     open System
-    open dotenv.net
+    open dotenv.net    
 
     //open DBILib
-    let configureContext =
+    let configureContext = 
         (fun () ->
-            let optionsBuilder = new DbContextOptionsBuilder<dbintegrationContext>();
-            //optionsBuilder.UseNpgsql("Host=localhost;Port=15432;Database=fseftest;Username=dbintegration;Password=fD$#d143da") |> ignore
+            let optionsBuilder = new DbContextOptionsBuilder<dbintegrationContext>();            
+            //optionsBuilder.UseNpgsql("Host=localhost;Port=15432;Database=fseftest;Username=dbintegration;Password=fD$#d143da") |> ignore                        
             optionsBuilder.UseNpgsql(Config.getEnvVar  "STRCONNECT_DB" ) |> ignore
             new dbintegrationContext(optionsBuilder.Options)
         )

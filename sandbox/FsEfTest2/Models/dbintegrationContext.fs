@@ -1,10 +1,11 @@
-﻿namespace DBILib.Models
+﻿namespace FsEfTest.Models
 
 open System
 open System.Collections.Generic
 open Microsoft.EntityFrameworkCore
 open Microsoft.EntityFrameworkCore.Metadata
 open EntityFrameworkCore.FSharp.Extensions
+
 open dbintegrationDomain
 
 type dbintegrationContext =
@@ -13,7 +14,7 @@ type dbintegrationContext =
     new() = { inherit DbContext() }
     new(options : DbContextOptions<dbintegrationContext>) =
         { inherit DbContext(options) }
-
+    
     [<DefaultValue>] val mutable private _Currencies : DbSet<Currency>
     member this.Currencies with get() = this._Currencies and set v = this._Currencies <- v
 
@@ -28,19 +29,20 @@ type dbintegrationContext =
 
     [<DefaultValue>] val mutable private _TradeRecords : DbSet<TradeRecord>
     member this.TradeRecords with get() = this._TradeRecords and set v = this._TradeRecords <- v
+    
 
-    (*
     override this.OnConfiguring(optionsBuilder: DbContextOptionsBuilder) =
-        if not optionsBuilder.IsConfigured then            //optionsBuilder.UseNpgsql("Host=localhost;Port=15432;Database=fseftest;Username=dbintegration;Password=fD$#d143da") |> ignore
-            optionsBuilder.UseNpgsql(DBILib.Config.getEnvVar "STRCONNECT_DB") |> ignore
+        if not optionsBuilder.IsConfigured then
+            optionsBuilder.UseNpgsql("Host=localhost;Port=15432;Database=fseftest;Username=dbintegration;Password=fD$#d143da") |> ignore
             ()
-    *)
+
     override this.OnModelCreating(modelBuilder: ModelBuilder) =
         base.OnModelCreating(modelBuilder)
-        modelBuilder.HasAnnotation("Relational:Collation", "en_US.utf8") |> ignore
-        modelBuilder.UseSerialColumns() |> ignore
 
+        modelBuilder.HasAnnotation("Relational:Collation", "en_US.utf8")
+            |> ignore
 
+        
         modelBuilder.Entity<Currency>(fun entity ->
 
             entity.ToTable("Currency")
@@ -79,7 +81,7 @@ type dbintegrationContext =
             entity.Property(fun e -> e.SecondCurrencyId)
                 .HasColumnName("SecondCurrencyID")
                 |> ignore
-            (*
+
             entity.HasOne(fun d -> d.FirstCurrency)
                 .WithMany("CurrencyPairFirstCurrencies")
                 .HasForeignKey([| "FirstCurrencyId" |])
@@ -92,7 +94,7 @@ type dbintegrationContext =
                 .HasForeignKey([| "SecondCurrencyId" |])
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_CurrenyID_2")
-                |> ignore*)
+                |> ignore
         ) |> ignore
 
         modelBuilder.Entity<Provider>(fun entity ->
@@ -130,8 +132,6 @@ type dbintegrationContext =
             entity.Property(fun e -> e.DateTimeRate)
                 .HasColumnType("date")
                 |> ignore
-
-
 
             entity.Property(fun e -> e.Price)
                 |> ignore
@@ -186,5 +186,5 @@ type dbintegrationContext =
                 |> ignore
         ) |> ignore
 
-
+        
         modelBuilder.RegisterOptionTypes()

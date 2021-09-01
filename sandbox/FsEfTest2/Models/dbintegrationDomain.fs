@@ -1,23 +1,18 @@
-﻿namespace DBILib.Models
+﻿namespace FsEfTest.Models
 
 open System
 open System.Collections.Generic
-open System.ComponentModel.DataAnnotations
-open System.ComponentModel.DataAnnotations.Schema
-
 
 module rec dbintegrationDomain =
-
-
+   
     [<CLIMutable>]
     type Currency = {
-        [<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
         CurrencyId: Int64
         Alias: string
         Name: string
         Symbol: string
-        //CurrencyPairFirstCurrencies: ICollection<CurrencyPair>
-        //CurrencyPairSecondCurrencies: ICollection<CurrencyPair>
+        CurrencyPairFirstCurrencies: ICollection<CurrencyPair>
+        CurrencyPairSecondCurrencies: ICollection<CurrencyPair>
     }
 
     [<CLIMutable>]
@@ -26,26 +21,25 @@ module rec dbintegrationDomain =
         Alias: string
         FirstCurrencyId: Int64
         SecondCurrencyId: Int64
-        //FirstCurrency: Currency
-        //SecondCurrency: Currency
+        FirstCurrency: Currency
+        SecondCurrency: Currency
         RateRecords: ICollection<RateRecord>
     }
 
-    [<CLIMutable>]
+    [<CLIMutable>]    
     type Provider = {
         ProviderId: Int64
         Description: string
         Name: string
-        ShortName: string
+        ShortName: string        
         RateRecords: ICollection<RateRecord>
     }
-
 
     [<CLIMutable>]
     type RateRecord = {
         RateRecordId: Int64
         CurrencyPairId: Int64
-        DateTimeRate: DateTimeOffset
+        DateTimeRate: DateTime
         Price: decimal
         ProviderId: Int64
         CurrencyPair: CurrencyPair
@@ -53,13 +47,23 @@ module rec dbintegrationDomain =
         TradeRecords: ICollection<TradeRecord>
     }
 
-
     [<CLIMutable>]
     type TradeRecord = {
         TradeRecordId: Int64
-        DateTimeTransaction: DateTimeOffset
+        DateTimeTransaction: DateTime
         Quantity: Int64
         TradeRateId: Int64
         TypeTransaction: string
         TradeRate: RateRecord
     }
+    
+    let createProvider (providerid:string, name:string, shortname:string, description:string) =         
+        let tr = new List<RateRecord>([])
+        let mutable provideridInt = providerid |> int64
+        let p =  { ProviderId = provideridInt; 
+                   Name = name;
+                   ShortName = shortname; 
+                   Description = description;
+                   RateRecords = tr
+                  }
+        p
