@@ -22,7 +22,6 @@ module CompositionRoot =
     let getAllProviders = dbintegrationRepository.getAllProviders getContext
     let addProvider = dbintegrationRepository.addProvider getContext
     let delProvider = dbintegrationRepository.deleteProvider getContext
-    let delAllProviders = dbintegrationRepository.deleteAllProviders getContext
     let updateProvider = dbintegrationRepository.updateProvider getContext
 
     // Simple alias Currency functions

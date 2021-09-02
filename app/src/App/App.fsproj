@@ -8,7 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="ExamplesDML.fs" />
+    <Compile Include="ExamplesProvider.fs" />
+    <Compile Include="ExamplesCurrency.fs" />
+    <Compile Include="ExamplesCurrencyPair.fs" />
+    <Compile Include="ExamplesRateRecord.fs" />
+    <Compile Include="ExamplesTradeRecord.fs" />
+    <Compile Include="LoadData.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

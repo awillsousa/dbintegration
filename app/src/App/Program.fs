@@ -1,12 +1,12 @@
 open System
 open Library
 open Argu
-open App.ExamplesCurrency
-open App.ExamplesProvider
-open App.ExamplesCurrencyPair
-open App.ExamplesRateRecord
-open App.ExamplesTradeRecord
-open App.LoadData
+open ExamplesCurrency
+open ExamplesProvider
+open ExamplesCurrencyPair
+open ExamplesRateRecord
+open ExamplesTradeRecord
+open LoadData
 
 type CliArguments =
     | Load_Data
@@ -43,40 +43,52 @@ let main argv =
         let traderecord = results.Contains TradeRecord
         let all = results.Contains All
 
+        if provider then
+            providerExamples
+        elif currency then
+            currencyExamples
+        elif currencypair then
+            currencyPairExamples
+        elif raterecord then
+            rateRecordExamples
+        elif traderecord then
+            tradeRecordExamples
+        elif all then
+            providerExamples
+            currencyExamples
+            currencyPairExamples
+            rateRecordExamples
+            tradeRecordExamples
+        else
+            printfn "%s" "Invalid option."
+            let usage = parser.PrintUsage()
+            printfn "%s" usage
+
+
+        (*
         let r = match loaddata with
                     | false -> ""
                     | true  -> loadData
-        Console.WriteLine(r)
+        printfn "%s" r
 
         match provider || all with
         | false -> "" |> ignore
-        | true  -> providerExamples |> ignore
+        | true  -> ExamplesProvider.providerExamples
 
         match currency || all with
         | false -> "" |> ignore
-        | true  -> currencyExamples |> ignore
+        | true  -> ExamplesCurrency.currencyExamples
 
         match currencypair || all with
         | false -> "" |> ignore
-        | true  -> currencyPairExamples |> ignore
+        | true  -> currencyPairExamples
 
         match raterecord || all with
         | false -> "" |> ignore
-        | true  -> rateRecordExamples |> ignore
-
-
-
-
-
-
-
-
-
-
-
+        | true  -> rateRecordExamples
+        *)
 
     with e ->
         printfn "%s" e.Message
-
 
     0 // return an integer exit code

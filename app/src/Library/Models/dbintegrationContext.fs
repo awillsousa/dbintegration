@@ -178,13 +178,13 @@ type dbintegrationContext =
 
             entity.Property(fun e -> e.TypeTransaction)
                 |> ignore
-
+            (*
             entity.HasOne(fun d -> d.TradeRate)
                 .WithMany("TradeRecords")
                 .HasForeignKey([| "TradeRateId" |])
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TradeRate_ID")
-                |> ignore
+                |> ignore*)
         ) |> ignore
 
 

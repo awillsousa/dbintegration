@@ -144,16 +144,6 @@ let excludeProvider id =
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
-let removeAllProviders =
-    try
-        let result = match delAllProviders with
-                        | Error e -> createResponseRecord("error", "No data deleted!", None)
-                        | Ok s -> createResponseRecord("ok", "All Providers deleted!", None)
-        serializeResult(result)
-    with
-        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
-        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
-
 
 (******************************)
 (* Currency related functions *)
@@ -459,7 +449,7 @@ let insertTradeRecord (currencypairid:int64, datetimetransaction:string, quantit
                     Quantity = quantity;
                     TradeRateId = traderateid;
                     TypeTransaction = typetransaction;
-                    TradeRate = tr.Value
+                    //TradeRate = tr.Value
                   }
 
         let r = addTradeRecord p

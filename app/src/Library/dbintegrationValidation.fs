@@ -53,7 +53,7 @@ module dbintegrationValidation =
                  Name = name;
                  ShortName = shortname;
                  Description = description;
-                 RateRecords =  List<RateRecord>([])
+                 //RateRecords =  List<RateRecord>([])
                }
         else
             Error errors
@@ -79,8 +79,8 @@ module dbintegrationValidation =
                  Name = name;
                  Alias = alias;
                  Symbol = symbol;
-                 CurrencyPairFirstCurrencies =  List<CurrencyPair>([]);
-                 CurrencyPairSecondCurrencies = List<CurrencyPair>([])
+                 //CurrencyPairFirstCurrencies =  List<CurrencyPair>([]);
+                 //CurrencyPairSecondCurrencies = List<CurrencyPair>([])
                }
         else
             Error errors
@@ -109,9 +109,9 @@ module dbintegrationValidation =
                  Alias = alias;
                  FirstCurrencyId = firstcurrencyid;
                  SecondCurrencyId = secondcurrencyid;
-                 FirstCurrency = relatedFirstCurr.Value;
-                 SecondCurrency = relatedSecondCurr.Value;
-                 RateRecords = List<RateRecord>()
+                 //FirstCurrency = relatedFirstCurr.Value;
+                 //SecondCurrency = relatedSecondCurr.Value;
+                 //RateRecords = List<RateRecord>()
                 }
 
         else
@@ -144,9 +144,9 @@ module dbintegrationValidation =
                  DateTimeRate = System.DateTime.ParseExact(datetimerate, format, provider);
                  Price = price;
                  ProviderId = providerid;
-                 TradeRecords = List<TradeRecord>()
-                 Provider = relatedProvider.Value
-                 CurrencyPair = relatedCurrencyPair.Value
+                 //TradeRecords = List<TradeRecord>()
+                 //Provider = relatedProvider.Value
+                 //CurrencyPair = relatedCurrencyPair.Value
                  }
         else
             Error errors

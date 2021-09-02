@@ -45,15 +45,7 @@ module dbintegrationRepository =
         let result = if result >= 1  then Some(entity) else None
         result
 
-    let deleteAllProviders  (context: dbintegrationContext) =
-        let providers = context.Providers.Include(fun e -> e.RateRecords)
-        for p in providers do
-            context.Remove(p) |> ignore
 
-        //context.Providers.RemoveRange(context.Providers) |> ignore
-        let r = context.SaveChanges true
-        let result = if r >= 1  then Ok "Success" else Error "Error"
-        result
 
 
     (************************************)
