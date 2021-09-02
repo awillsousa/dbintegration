@@ -39,23 +39,20 @@ RUN apt-get install -y nodejs
 
 # Database access
 RUN dotnet tool install --global dotnet-ef
-RUN dotnet add package dotenv.net --version 3.1.0
-RUN dotnet add package FSharp.Core --version=5.0.1
-RUN dotnet add package Microsoft.EntityFrameworkCore --version 5.0.9
-RUN dotnet add package Microsoft.EntityFrameworkCore.Design --version 5.0.9
-RUN dotnet add package Microsoft.EntityFrameworkCore.Tools --version 5.0.3
-RUN dotnet add package Npgsql --version 5.0.7
-RUN dotnet add package SQLProvider --version 1.2.8
-RUN dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL --version 5.0.0
-RUN dotnet add package EntityFrameworkCore.FSharp --version 5.0.3-beta006
-RUN dotnet add package Fsharp.Data --version 4.2.2
-RUN dotnet add package Npgsql.FSharp --version 4.0.0
-RUN dotnet add package System.Data.SqlClient --version 4.8.2
+#RUN dotnet add package dotenv.net --version 3.1.0
+#RUN dotnet add package FSharp.Core --version=5.0.1
+#RUN dotnet add package Microsoft.EntityFrameworkCore --version 5.0.9
+#RUN dotnet add package Microsoft.EntityFrameworkCore.Design --version 5.0.9
+#RUN dotnet add package Microsoft.EntityFrameworkCore.Tools --version 5.0.3
+#RUN dotnet add package Npgsql --version 5.0.7
+#RUN dotnet add package SQLProvider --version 1.2.8
+#RUN dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL --version 5.0.0
+#RUN dotnet add package EntityFrameworkCore.FSharp --version 5.0.3-beta006
+#RUN dotnet add package Fsharp.Data --version 4.2.2
+#RUN dotnet add package Npgsql.FSharp --version 4.0.0
+#RUN dotnet add package System.Data.SqlClient --version 4.8.2
 
 
 # Copia do Código
-COPY . /code/
-
-# run entrypoint.sh
-ENTRYPOINT ["dotnet","run"]
+#COPY . /code/
 

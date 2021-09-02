@@ -3,27 +3,29 @@ version: '3'
 services:
   dbiapp:
     build:
-      context: .
-      dockerfile: ./app/Dockerfile
+      context: ./app
+      dockerfile: Dockerfile
+    command: dotnet run --project /code/src/WebApp/
     restart: always
     volumes:
-      - .:/code
+      - ./app:/code
     ports:
-      - "8080:8080"
+      - "5000:5000"
+      - "5001:5001"
     expose:
-      # Opens port 8081 on the container
-      - '8081'
+      - '5000'
+      - '5001'
     networks:
       - dbintegration-compose-network
     env_file:
-      - .env.dev
+      - ./conf/.env.dev
 
   postgres:
     image: postgres
     environment:
       POSTGRES_PASSWORD: "Br1cK@b0d3"
     ports:
-      - "15432:5432"
+      - "5432:5432"
     volumes:
       - ./db/data:/var/lib/postgresql/data
     networks:

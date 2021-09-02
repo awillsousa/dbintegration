@@ -3,20 +3,18 @@ version: '3'
 services:
   dbiapp:
     build:
-      context: .
-      dockerfile: ./app/Dockerfile
+      context: ./app
+      dockerfile: Dockerfile
+    command: dotnet run --project ./app/src/WebApp/
     restart: always
     volumes:
       - .:/code
-    #ports:
-    #  - "8081:8081"
-    #expose:
-    #  # Opens port 8081 on the container
-    #  - '8081'
+    ports:
+      - "5001:5001"
+    expose:
+      - "5001"
     networks:
       - dbintegration-compose-network
-    env_file:
-      - .env.dev
 
 
 networks:
