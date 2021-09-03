@@ -9,6 +9,6 @@
 # Created: 01/09/2021
 # Modified: 
 
-docker-compose -f docker-compose-app.yml up -d
+docker-compose up -d
 
 exit 0

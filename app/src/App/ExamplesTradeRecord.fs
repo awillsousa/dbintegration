@@ -4,7 +4,6 @@ module ExamplesTradeRecord
     (* TradeRecord Examples *)
 
     let displayOneTradeRecord id =
-        printfn "%s" "\nGet just one TradeRecord"
         let p = findTradeRecord id
         p
 
@@ -14,26 +13,24 @@ module ExamplesTradeRecord
         p
 
     // Insert currency
-    let insertOneTradeRecord currencypairid datetimerate price providerid =
-        (*let r = insertTradeRecord(System.Int64.Parse(currencypairid),
-                                   datetimerate,
-                                   System.Decimal.Parse(price),
-                                   System.Int64.Parse(providerid))*)
-        let p = ""
+    let insertOneTradeRecord datetimetransaction quantity traderateid typetransaction =
+        let p = insertTradeRecord(0L,
+                                  datetimetransaction,
+                                  System.Int64.Parse(quantity),
+                                  System.Int64.Parse(traderateid),
+                                  typetransaction)
         p
 
     let tradeRecordExamples =
-        printfn "%s" "\nTradeRecord manipulation examples"
-        printfn "%s" "==============================\n"
+        "\nTradeRecord manipulation examples" |> printfn "%s"
+        "==============================\n" |> printfn "%s"
 
-        printfn "%s" "\nDisplay all TradeRecords"
-        let r = displayAllTradeRecords
-        printfn "%s" r
+        "\nDisplay all TradeRecords" |> printfn "%s"
+        displayAllTradeRecords |> printfn "%s"
 
-        printfn "%s" "\nInsert one TradeRecord"
-        let r = insertOneTradeRecord "2" "01/08/2021 10:30:21" "5.00" "30"
-        printfn "%s" r
-        printfn "%s" "\nDisplay all TradeRecord"
-        let r = displayAllTradeRecords
-        printfn "%s" r
+        "\nInsert one TradeRecord" |> printfn "%s"
+        insertOneTradeRecord "01/08/2021 10:30:21" "1000" "1" "SELL"|> printfn "%s"
+
+        "\nDisplay all TradeRecord" |> printfn "%s"
+        displayAllTradeRecords |> printfn "%s"
 

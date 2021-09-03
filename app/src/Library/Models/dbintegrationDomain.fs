@@ -11,13 +11,10 @@ module rec dbintegrationDomain =
 
     [<CLIMutable>]
     type Currency = {
-        //[<DatabaseGenerated(DatabaseGeneratedOption.Identity)>]
         CurrencyId: Int64
         Alias: string
         Name: string
         Symbol: string
-        //CurrencyPairFirstCurrencies: ICollection<CurrencyPair>
-        //CurrencyPairSecondCurrencies: ICollection<CurrencyPair>
     }
 
     [<CLIMutable>]
@@ -26,9 +23,6 @@ module rec dbintegrationDomain =
         Alias: string
         FirstCurrencyId: Int64
         SecondCurrencyId: Int64
-        //FirstCurrency: Currency
-        //SecondCurrency: Currency
-        //RateRecords: ICollection<RateRecord>
     }
 
     [<CLIMutable>]
@@ -37,7 +31,6 @@ module rec dbintegrationDomain =
         Description: string
         Name: string
         ShortName: string
-        //RateRecords: ICollection<RateRecord>
     }
 
 
@@ -48,9 +41,6 @@ module rec dbintegrationDomain =
         DateTimeRate: DateTime
         Price: decimal
         ProviderId: Int64
-        //CurrencyPair: CurrencyPair
-        //Provider: Provider
-        //TradeRecords: ICollection<TradeRecord>
     }
 
 
@@ -61,5 +51,4 @@ module rec dbintegrationDomain =
         Quantity: Int64
         TradeRateId: Int64
         TypeTransaction: string
-        //TradeRate: RateRecord
     }

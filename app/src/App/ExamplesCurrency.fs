@@ -14,33 +14,29 @@ module ExamplesCurrency
 
     // Insert currency
     let insertOneCurrency alias name symbol =
-        let p = insertCurrency(alias, name, symbol)
+        let p = insertCurrency(0L, alias, name, symbol)
         p
 
     let currencyExamples =
-        printfn "%s" "\nCurrency manipulation examples"
-        printfn "%s" "==============================\n"
+        "\nCurrency manipulation examples" |> printfn "%s"
+        "==============================\n" |> printfn "%s"
 
-        printfn "%s" "\nDisplay all Currencies"
-        let r = displayAllCurrencies
-        printfn "%s" r
+        "\nDisplay all Currencies" |> printfn "%s"
+        displayAllCurrencies |> printfn "%s"
 
-        printfn "%s" "\nInsert one currency"
-        let r = insertOneCurrency "REAL" "Real" "R$"
-        printfn "%s" r
-        let r = displayAllCurrencies
-        printfn "%s" r
+        "\nInsert one currency" |> printfn "%s"
+        insertOneCurrency "REAL" "Real" "R$" |> printfn "%s"
 
-        printfn "%s" "\nInsert one currency"
-        let r = insertOneCurrency "DOLAR" "USD" "US$"
-        printfn "%s" r
-        let r = displayAllCurrencies
-        printfn "%s" r
+        displayAllCurrencies |> printfn "%s"
 
-        printfn "%s" "\nInsert one currency with empty fields"
-        let r = insertOneCurrency "" "" "R$"
-        printfn "%s" r
+        "\nInsert one currency" |> printfn "%s"
+        insertOneCurrency "DOLAR" "USD" "US$" |> printfn "%s"
 
-        printfn "%s" "\nExclude one currency that doesn't exists"
-        let r = excludeCurrency 1000L
-        printfn "%s" r
+        displayAllCurrencies |> printfn "%s"
+
+        "\nInsert one currency with empty fields" |> printfn "%s"
+        insertOneCurrency "" "" "R$" |> printfn "%s"
+
+        "\nExclude one currency that doesn't exists" |> printfn "%s"
+        excludeCurrency 1000L |> printfn "%s"
+

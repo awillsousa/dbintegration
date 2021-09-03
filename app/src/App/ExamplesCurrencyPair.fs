@@ -14,34 +14,31 @@ module ExamplesCurrencyPair
 
     // Insert currency
     let insertOneCurrencyPair alias currency1 currency2 =
-        let p = insertCurrencyPair(alias, System.Int64.Parse(currency1), System.Int64.Parse(currency2))
+        let p = insertCurrencyPair(0L, alias, System.Int64.Parse(currency1), System.Int64.Parse(currency2))
         p
 
     let currencyPairExamples =
-        printfn "%s" "\nCurrencyPair manipulation examples"
-        printfn "%s" "==============================\n"
+        "\nCurrencyPair manipulation examples" |> printfn "%s"
+        "==============================\n" |> printfn "%s"
 
-        printfn "%s" "\nDisplay all CurrencyPairs"
-        printfn "%s" displayAllCurrencyPairs
+        "\nDisplay all CurrencyPairs" |> printfn "%s"
+        displayAllCurrencyPairs |> printfn "%s"
 
-        printfn "%s" "\nInsert one Currency Pair"
-        let r = insertOneCurrencyPair "REAL/USD" "1" "2"
-        printfn "%s" r
-        printfn "%s" "\nDisplay all CurrencyPairs"
-        let r = displayAllCurrencyPairs
-        printfn "%s" r
+        "\nInsert one Currency Pair" |> printfn "%s"
+        insertOneCurrencyPair "REAL/USD" "1" "2" |> printfn "%s"
 
-        printfn "%s" "\nInsert one Currency Pair"
-        let r = insertOneCurrencyPair "USD/REAL" "2" "1"
-        printfn "%s" r
-        printfn "%s" "\nDisplay all CurrencyPairs"
-        let r = displayAllCurrencyPairs
-        printfn "%s" r
+        "\nDisplay all CurrencyPairs" |> printfn "%s"
+        displayAllCurrencyPairs |> printfn "%s"
 
-        printfn "%s" "\nInsert one CurrencyPair with invalid fields"
-        let r = insertOneCurrencyPair "" "100" "102"
-        printfn "%s" r
+        "\nInsert one Currency Pair" |> printfn "%s"
+        insertOneCurrencyPair "USD/REAL" "2" "1" |> printfn "%s"
 
-        printfn "%s" "\nExclude one CurrencyPair that doesn't exists"
-        let r = excludeCurrencyPair 1000L
-        printfn "%s" r
+        "\nDisplay all CurrencyPairs" |> printfn "%s"
+        displayAllCurrencyPairs |> printfn "%s"
+
+        "\nInsert one CurrencyPair with invalid fields" |> printfn "%s"
+        insertOneCurrencyPair "" "100" "102" |> printfn "%s"
+
+        "\nExclude one CurrencyPair that doesn't exists" |> printfn "%s"
+        excludeCurrencyPair 1000L |> printfn "%s"
+

@@ -16,30 +16,19 @@ open Newtonsoft.Json
 // Record defined to be serialized in all function calls
 type ResultData = {Result: string; Msg: obj; Data: obj }
 
+
 // Function to create a record to contain information about
 // the request that will be serialized to json
 let createResponseRecord (r:string, msg:obj, data:obj) =
     let r = {Result = r; Msg = msg; Data = data}
     r
 
-
-//let json = Newtonsoft.Json.JsonSerializer.Create()
-//let! json.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-
+// Serialize records
 let serializeResult r =
-    (*
-    let options = JsonSerializerOptions(MaxDepth = 1,
-                                        IgnoreNullValues = true,
-                                        IgnoreReadOnlyProperties = true)
-    JsonSerializer.Serialize(r, options, Formatting.Indented)
-    *)
-
     let options = JsonSerializerSettings()
     options.ReferenceLoopHandling <- ReferenceLoopHandling.Ignore
     options.Formatting <- Formatting.Indented
     options.MaxDepth <- 1
-    //let json = Newtonsoft.Json.JsonSerializer.Create(options)
-    //json.Serialize(r)
     JsonConvert.SerializeObject(r, options)
 
 
@@ -58,6 +47,8 @@ let findProvider id =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Return all providers in the database
@@ -71,15 +62,16 @@ let allProviders =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Insert a provider instance
-let insertProvider (name:string, shortname:string, description:string) =
+let insertProvider (providerid: int64, name:string, shortname:string, description:string) =
     try
         // Validate the provider record field values if all is OK
         // create a provider record
-        let defaultProviderId = 0L
-        let p =  createProvider defaultProviderId name shortname description
+        let p =  createProvider providerid name shortname description
 
         // Analyze the return of the createProvider and return error
         // or try insert the record
@@ -94,18 +86,13 @@ let insertProvider (name:string, shortname:string, description:string) =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Update a provider instance
 let changeProvider providerid name shortname description =
     try
-        (*
-        let r = updateProvider p
-        let result = match r with
-                        | None -> createResponseRecord("error", "Error when updating data!", None)
-                        | _ -> createResponseRecord("ok", "Provider updated with success!", None)
-        serializeResult(result)
-        *)
         // Validate the provider record field values if all is OK
         // create a provider record
         let p =  createProvider providerid name shortname description
@@ -129,6 +116,8 @@ let changeProvider providerid name shortname description =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Exclude one provider
@@ -143,12 +132,28 @@ let excludeProvider id =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
+
+// <!!!CAUTION!!!> Exclude all Provider rows in the database
+let excludeAllProviders =
+    try
+        let result = match delAllProviders with
+                        | None -> createResponseRecord("error", "No data deleted!", null)
+                        | _ -> createResponseRecord("ok", "All Providers deleted!", None)
+        serializeResult(result)
+    with
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 (******************************)
 (* Currency related functions *)
 (******************************)
 
+// Find a specific Curency by id
 let findCurrency id =
     try
         let currencyData = getCurrency id
@@ -159,6 +164,8 @@ let findCurrency id =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Return all providers in the database
@@ -172,15 +179,16 @@ let allCurrencies =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Insert a provider instance
-let insertCurrency (alias:string, name:string, symbol:string) =
+let insertCurrency (currencyid:int64, alias:string, name:string, symbol:string) =
     try
         // Validate the currency record field values if all is OK
         // create a currency record
-        let defaultCurrencyId = 0L
-        let p =  createCurrency defaultCurrencyId alias name symbol
+        let p =  createCurrency currencyid alias name symbol
 
         // Analyze the return of the createProvider and return error
         // or try insert the record
@@ -193,6 +201,8 @@ let insertCurrency (alias:string, name:string, symbol:string) =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Update a provider instance
@@ -206,6 +216,8 @@ let changeCurrency p =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Exclude one provider
@@ -221,7 +233,18 @@ let excludeCurrency id =
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
-
+// <!!!CAUTION!!!> Exclude all Currency rows in the database
+let excludeAllCurrencies =
+    try
+        let result = match delAllCurrencies with
+                        | None -> createResponseRecord("error", "No data deleted!", null)
+                        | _ -> createResponseRecord("ok", "All Currencies deleted!", None)
+        serializeResult(result)
+    with
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 (**********************************)
 (* CurrencyPair related functions *)
@@ -238,7 +261,8 @@ let findCurrencyPair id =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
-
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 // Return all CurrencyPairs in the database
 let allCurrencyPairs =
@@ -251,13 +275,13 @@ let allCurrencyPairs =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
-
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 // Insert a CurrencyPair instance
-let insertCurrencyPair (alias:string, firstcurrencyid:int64, secondcurrencyid:int64) =
+let insertCurrencyPair (currencypairid: int64, alias:string, firstcurrencyid:int64, secondcurrencyid:int64) =
     try
-        let defaultId = 0L
-        let p = createCurrencyPair defaultId alias firstcurrencyid secondcurrencyid
+        let p = createCurrencyPair currencypairid alias firstcurrencyid secondcurrencyid
 
         let result = match p with
                      | Error errs -> createResponseRecord ("error", errs , None)
@@ -268,7 +292,8 @@ let insertCurrencyPair (alias:string, firstcurrencyid:int64, secondcurrencyid:in
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
-
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 // Update a CurrencyPair instance
 let changeCurrencyPair p =
@@ -281,7 +306,8 @@ let changeCurrencyPair p =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
-
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 // Exclude one CurrencyPair
 let excludeCurrencyPair id =
@@ -295,11 +321,27 @@ let excludeCurrencyPair id =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+
+// <!!!CAUTION!!!> Exclude all CurrencyPair rows in the database
+let excludeAllCurrencyPairs =
+    try
+        let result = match delAllCurrencyPairs with
+                        | None -> createResponseRecord("error", "No data deleted!", null)
+                        | _ -> createResponseRecord("ok", "All CurrencyPairs deleted!", None)
+        serializeResult(result)
+    with
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 (********************************)
 (* RateRecord related functions *)
 (********************************)
+
 // Find a specific RateRecord
 let findRateRecord id =
     try
@@ -311,6 +353,9 @@ let findRateRecord id =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+
 
 // Return all RateRecords in the database
 let allRateRecords =
@@ -318,19 +363,18 @@ let allRateRecords =
         let rateRecordData = getAllRateRecords
         let result = match rateRecordData.Length with
                         | 0 -> createResponseRecord("ok", "No data found!", [])
-                        | _ -> createResponseRecord("ok", "", [rateRecordData])
+                        | _ -> createResponseRecord("ok", "", rateRecordData)
         serializeResult(result)
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
-
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Find all RateRecords by Provider
 let findRateRecordbyProvider providerId =
     try
-        //let providerSome = getProvider providerId
-        //let providerData = providerSome.Value
         let rateRecords = getRateRecordsbyProvider providerId
         let result = match rateRecords.Length with
                         | 0 -> createResponseRecord("ok", "No data found!", [])
@@ -339,6 +383,9 @@ let findRateRecordbyProvider providerId =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+
 
 // Filter RateRecords
 let filterRateRecord providerId currencyPairId startDate endDate startPrice endPrice =
@@ -352,26 +399,12 @@ let filterRateRecord providerId currencyPairId startDate endDate startPrice endP
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
+
 // Insert a RateRecord
-let insertRateRecord (currencypairid:int64, datetimerate:string, price:decimal, providerid:int64) =
+let insertRateRecord (raterecordid:int64, currencypairid:int64, datetimerate:string, price:decimal, providerid:int64) =
     try
-        (*
-        let cp = getCurrencyPair currencypairid
-        let provider = getProvider providerid
-        let tr = List<TradeRecord>()
-        let p =  {  RateRecordId = 0L;
-                    CurrencyPairId = currencypairid;
-                    DateTimeRate = System.DateTime.Parse(datetimerate);
-                    Price = price;
-                    ProviderId = providerid;
-                    CurrencyPair = cp.Value;
-                    Provider = provider.Value;
-                    TradeRecords = tr
-                  }
-        *)
-        let idraterecord = 0L // Default to autoincrement
         // Validate and create a record of RateRecord type
-        let r = createRateRecord idraterecord currencypairid datetimerate price providerid
+        let r = createRateRecord raterecordid currencypairid datetimerate price providerid
 
         let result = match r with
                      | Error errs -> createResponseRecord ("error", errs , None)
@@ -382,6 +415,9 @@ let insertRateRecord (currencypairid:int64, datetimerate:string, price:decimal, 
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+
 
 // Change a RateRecord
 let changeRateRecord p =
@@ -394,6 +430,9 @@ let changeRateRecord p =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+
 
 // Exclude RateRecord
 let excludeRateRecord id =
@@ -407,7 +446,21 @@ let excludeRateRecord id =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
+// <!!!CAUTION!!!> Exclude all RateRecord rows in the database
+let excludeAllRateRecords =
+    try
+        let result = match delAllRateRecords with
+                        | None -> createResponseRecord("error", "No data deleted!", null)
+                        | _ -> createResponseRecord("ok", "All RateRecords deleted!", None)
+        serializeResult(result)
+    with
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 (*********************************)
@@ -425,6 +478,9 @@ let findTradeRecord id =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+
 
 // Return all RateRecords in the database
 let allTradeRecords =
@@ -437,29 +493,27 @@ let allTradeRecords =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
-
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
 
 // Insert a TradeRecord
-let insertTradeRecord (currencypairid:int64, datetimetransaction:string, quantity:int64, traderateid:int64, typetransaction:string) =
+let insertTradeRecord (traderecordid:int64, datetimetransaction:string, quantity:int64, raterecordid:int64, typetransaction:string) =
     try
-        let tr = getRateRecord traderateid
-        let p =  {  TradeRecordId = 0L;
-                    DateTimeTransaction = System.DateTime.Parse(datetimetransaction);
-                    Quantity = quantity;
-                    TradeRateId = traderateid;
-                    TypeTransaction = typetransaction;
-                    //TradeRate = tr.Value
-                  }
+        let r = createTradeRecord traderecordid datetimetransaction quantity raterecordid typetransaction
 
-        let r = addTradeRecord p
         let result = match r with
-                        | None -> {Result = "error"; Msg="Error when inserting data!"; Data=None}
-                        | _ -> {Result = "ok"; Msg="Trade Record inserted with success!"; Data=None}
+                     | Error errs -> createResponseRecord ("error", errs , None)
+                     | Ok p -> match addTradeRecord p with
+                               | None -> createResponseRecord ("error", "Error when inserting data!", None)
+                               | _ -> createResponseRecord ("ok", "Trade Record inserted with success!", None)
         serializeResult(result)
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+
 
 // Update a TradeRecord
 let changeTradeRecord p =
@@ -472,6 +526,9 @@ let changeTradeRecord p =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+
 
 // Exclude a TradeRecord
 let excludeTradeRecord id =
@@ -485,4 +542,20 @@ let excludeTradeRecord id =
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
+
+// <!!!CAUTION!!!> Exclude all TradeRecord rows in the database
+let excludeAllTradeRecords =
+    try
+        //let result = match delAllTradeRecords with
+        let result = match delAllTradeRecords with
+                        | None -> createResponseRecord("error", "No data deleted!", null)
+                        | _ -> createResponseRecord("ok", "All TradeRecords deleted!", None)
+        serializeResult(result)
+    with
+        | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+        | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))

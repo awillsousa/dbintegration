@@ -7,6 +7,7 @@ open ExamplesCurrencyPair
 open ExamplesRateRecord
 open ExamplesTradeRecord
 open LoadData
+open DBILib.CompositionRoot
 
 type CliArguments =
     | Load_Data
@@ -59,34 +60,34 @@ let main argv =
             currencyPairExamples
             rateRecordExamples
             tradeRecordExamples
+        elif loaddata then
+            // Exclude all data in the database
+            try
+                excludeAllProviders |> printfn "%A"
+            with
+            | ex -> printfn "%A" ex
+
+            (*excludeAllTradeRecords |> printfn "%s"
+            excludeAllRateRecords |> printfn "%s"
+            excludeAllCurrencyPairs |> printfn "%s"
+            excludeAllCurrencies |> printfn "%s"
+            excludeAllProviders |> printfn "%s"
+
+            // Insert dummy data for Provider
+            let providersDummy = ProviderGenerator.Generate()
+            for l in providersDummy do
+               addProvider l |> printfn "%A"
+
+            // Insert dummy data for Currency
+            let currencyDummy = CurrencyGenerator.Generate()
+            for l in currencyDummy do
+               addCurrency l |> printfn "%A"
+            *)
         else
             printfn "%s" "Invalid option."
             let usage = parser.PrintUsage()
             printfn "%s" usage
 
-
-        (*
-        let r = match loaddata with
-                    | false -> ""
-                    | true  -> loadData
-        printfn "%s" r
-
-        match provider || all with
-        | false -> "" |> ignore
-        | true  -> ExamplesProvider.providerExamples
-
-        match currency || all with
-        | false -> "" |> ignore
-        | true  -> ExamplesCurrency.currencyExamples
-
-        match currencypair || all with
-        | false -> "" |> ignore
-        | true  -> currencyPairExamples
-
-        match raterecord || all with
-        | false -> "" |> ignore
-        | true  -> rateRecordExamples
-        *)
 
     with e ->
         printfn "%s" e.Message

@@ -23,6 +23,7 @@ module CompositionRoot =
     let addProvider = dbintegrationRepository.addProvider getContext
     let delProvider = dbintegrationRepository.deleteProvider getContext
     let updateProvider = dbintegrationRepository.updateProvider getContext
+    let delAllProviders = dbintegrationRepository.deleteAllProviders getContext
 
     // Simple alias Currency functions
     let getCurrency  = dbintegrationRepository.getCurrency getContext
@@ -30,6 +31,7 @@ module CompositionRoot =
     let addCurrency = dbintegrationRepository.addCurrency getContext
     let delCurrency = dbintegrationRepository.deleteCurrency getContext
     let updateCurrency = dbintegrationRepository.updateProvider getContext
+    let delAllCurrencies = dbintegrationRepository.deleteAllCurrencies getContext
 
     // Simple alias CurrencyPair functions
     let getCurrencyPair  = dbintegrationRepository.getCurrencyPair getContext
@@ -37,6 +39,7 @@ module CompositionRoot =
     let addCurrencyPair = dbintegrationRepository.addCurrencyPair getContext
     let delCurrencyPair = dbintegrationRepository.deleteCurrencyPair getContext
     let updateCurrencyPair = dbintegrationRepository.updateCurrencyPair getContext
+    let delAllCurrencyPairs = dbintegrationRepository.deleteAllCurrencyPairs getContext
 
     // Simple alias RateRecord functions
     let getRateRecord  = dbintegrationRepository.getRateRecord getContext
@@ -46,6 +49,7 @@ module CompositionRoot =
     let delRateRecord = dbintegrationRepository.deleteRateRecord getContext
     let updateRateRecord = dbintegrationRepository.updateRateRecord getContext
     let getRateRecordsbyProvider = dbintegrationRepository.getRateRecordsbyProvider getContext
+    let delAllRateRecords = dbintegrationRepository.deleteAllRateRecords getContext
 
     // Simple alias RateRecord functions
     let getTradeRecord  = dbintegrationRepository.getTradeRecord getContext
@@ -53,3 +57,6 @@ module CompositionRoot =
     let addTradeRecord = dbintegrationRepository.addTradeRecord getContext
     let delTradeRecord = dbintegrationRepository.deleteTradeRecord getContext
     let updateTradeRecord = dbintegrationRepository.updateTradeRecord getContext
+    let delAllTradeRecords = dbintegrationRepository.deleteAllTradeRecords getContext
+
+

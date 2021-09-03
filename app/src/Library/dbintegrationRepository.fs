@@ -45,6 +45,12 @@ module dbintegrationRepository =
         let result = if result >= 1  then Some(entity) else None
         result
 
+    let deleteAllProviders (context: dbintegrationContext) =
+        context.Database.ExecuteSqlRaw("TRUNCATE TABLE PROVIDER CASCADE;") |> ignore
+        let result = context.SaveChanges true
+        let result = if result >= 1  then Some(result) else None
+        result
+
 
 
 
@@ -84,6 +90,12 @@ module dbintegrationRepository =
         context.Entry(currentEntry).CurrentValues.SetValues(entity)
         let result = context.SaveChanges true
         let result = if result >= 1  then Some(entity) else None
+        result
+
+    let deleteAllCurrencies (context: dbintegrationContext) =
+        context.Database.ExecuteSqlRaw("TRUNCATE TABLE CURRENCY CASCADE;") |> ignore
+        let result = context.SaveChanges true
+        let result = if result >= 1  then Some(result) else None
         result
 
 
@@ -126,6 +138,11 @@ module dbintegrationRepository =
         let result = if result >= 1  then Some(entity) else None
         result
 
+    let deleteAllCurrencyPairs (context: dbintegrationContext) =
+        context.Database.ExecuteSqlRaw("TRUNCATE TABLE CURRENCYPAIR CASCADE;") |> ignore
+        let result = context.SaveChanges true
+        let result = if result >= 1  then Some(result) else None
+        result
 
     (************************************)
     // RateRecord related functions
@@ -186,6 +203,11 @@ module dbintegrationRepository =
         let result = if result >= 1  then Some(entity) else None
         result
 
+    let deleteAllRateRecords (context: dbintegrationContext) =
+        context.Database.ExecuteSqlRaw("TRUNCATE TABLE RATERECORD CASCADE;") |> ignore
+        let result = context.SaveChanges true
+        let result = if result >= 1  then Some(result) else None
+        result
 
     (************************************)
     // TradeRecord related functions
@@ -226,3 +248,8 @@ module dbintegrationRepository =
         let result = if result >= 1  then Some(entity) else None
         result
 
+    let deleteAllTradeRecords (context: dbintegrationContext) =
+        context.Database.ExecuteSqlRaw("TRUNCATE TABLE TRADERECORD CASCADE;") |> ignore
+        let result = context.SaveChanges true
+        let result = if result >= 1  then Some(result) else None
+        result

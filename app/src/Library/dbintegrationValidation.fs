@@ -132,12 +132,12 @@ module dbintegrationValidation =
         let errors = seq {
             if not (validDateTime datetimerate) then yield "DateTimeRate with incorrect format."
             if relatedCurrencyPair = None then yield "CurrencyPairId does not exists in database!"
-            if relatedProvider = None then yield "ProviderId invalid does not exists in database!"
+            if relatedProvider = None then yield "ProviderId does not exists in database!"
         }
 
         if (Seq.isEmpty errors) then
-            let format = "dd/MM/yyyy HH:mm:ss.ffffff"
-            let provider = CultureInfo.InvariantCulture;
+            let format = "dd/MM/yyyy HH:mm:ss"
+            let provider = CultureInfo.InvariantCulture
 
             Ok { RateRecordId = idraterecord;
                  CurrencyPairId = currencypairid;
@@ -154,5 +154,34 @@ module dbintegrationValidation =
     // Create RateRecord record
     let createRateRecord idraterecord currencypairid datetimerate price providerid =
         validateRateRecord idraterecord currencypairid datetimerate price providerid
+
+    (*****************************)
+    (*  TradeRecord Validations  *)
+    (*****************************)
+
+    let validateTradeRecord idtraderecord datetimetransaction quantity raterecordid typetransaction =
+        let relatedRateRecord = getRateRecord raterecordid
+
+        let errors = seq {
+            if not (validDateTime datetimetransaction) then yield "DateTimeTransaction with incorrect format."
+            if relatedRateRecord = None then yield "RateRecordId does not exists in database!"
+        }
+
+        if (Seq.isEmpty errors) then
+            let format = "dd/MM/yyyy HH:mm:ss"
+            let provider = CultureInfo.InvariantCulture
+
+            Ok { TradeRecordId = idtraderecord;
+                 DateTimeTransaction = System.DateTime.ParseExact(datetimetransaction, format, provider);
+                 Quantity = quantity;
+                 TradeRateId = raterecordid;
+                 TypeTransaction = typetransaction;
+               }
+        else
+            Error errors
+
+    // Create RateRecord record
+    let createTradeRecord idtraderecord datetimetransaction quantity raterecordid typetransaction =
+        validateTradeRecord idtraderecord datetimetransaction quantity raterecordid typetransaction
 
 

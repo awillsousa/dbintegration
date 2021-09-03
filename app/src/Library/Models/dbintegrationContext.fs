@@ -129,7 +129,7 @@ type dbintegrationContext =
                 |> ignore
 
             entity.Property(fun e -> e.DateTimeRate)
-                .HasColumnType("date")
+                .HasColumnType("timestamp")
                 |> ignore
 
             entity.Property(fun e -> e.Price)
@@ -166,6 +166,7 @@ type dbintegrationContext =
                 |> ignore
 
             entity.Property(fun e -> e.DateTimeTransaction)
+                .HasColumnType("timestamp")
                 |> ignore
 
             entity.Property(fun e -> e.Quantity)

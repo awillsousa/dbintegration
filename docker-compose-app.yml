@@ -5,13 +5,15 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile
-    command: dotnet run --project ./app/src/WebApp/
+    command: dotnet run --project /code/src/WebApp/
     restart: always
     volumes:
-      - .:/code
+      - ./app:/code
     ports:
+      - "5000:5000"
       - "5001:5001"
     expose:
+      - "5000"
       - "5001"
     networks:
       - dbintegration-compose-network

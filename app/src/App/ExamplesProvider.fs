@@ -13,27 +13,25 @@ module ExamplesProvider
 
     // Insert provider
     let insertOneProvider name shortname description =
-        let p = insertProvider(name, shortname, description)
+        let p = insertProvider(0L, name, shortname, description)
         p
 
     let providerExamples =
         // Deleta todas os Providers
         //printfn "%s" removeAllProviders
 
-        printfn "%s" "\nProvider manipulation examples"
-        printfn "%s" "==============================\n"
+        "\nProvider manipulation examples" |> printfn "%s"
+        "==============================\n" |> printfn "%s"
 
-        printfn "%s" "\nDisplay all Providers"
-        printfn "%s" displayAllProviders
+        "\nDisplay all Providers" |> printfn "%s"
+        displayAllProviders |> printfn "%s"
 
-        printfn "%s" "\nInsert one provider"
-        let r = insertOneProvider "New Universal Series Broker" "N-USB" "New Broker USM"
-        printfn "%s" r
+        "\nInsert one provider" |> printfn "%s"
+        insertOneProvider "New Universal Series Broker" "N-USB" "New Broker USM" |> printfn "%s"
 
-        printfn "%s" "\nInsert one provider with empty fields"
-        let r = insertOneProvider "" "" "Broker Description"
-        printfn "%s" r
+        "\nInsert one provider with empty fields" |> printfn "%s"
+        insertOneProvider "" "" "Broker Description" |> printfn "%s"
 
-        printfn "%s" "\nExclude one provider that doesn't exists"
-        let r = excludeProvider 1L
-        printfn "%s" r
+        "\nExclude one provider that doesn't exists" |> printfn "%s"
+        excludeProvider 1L |> printfn "%s"
+
