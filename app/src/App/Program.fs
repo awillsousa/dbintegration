@@ -62,27 +62,60 @@ let main argv =
             tradeRecordExamples
         elif loaddata then
             // Exclude all data in the database
-            try
-                excludeAllProviders |> printfn "%A"
-            with
-            | ex -> printfn "%A" ex
-
-            (*excludeAllTradeRecords |> printfn "%s"
+            // TODO: this code thrown an exception
+            //       check if using TRUNCATE is the
+            // the better option
+            (*
+            excludeAllTradeRecords |> printfn "%s"
             excludeAllRateRecords |> printfn "%s"
             excludeAllCurrencyPairs |> printfn "%s"
             excludeAllCurrencies |> printfn "%s"
             excludeAllProviders |> printfn "%s"
+            *)
 
             // Insert dummy data for Provider
-            let providersDummy = ProviderGenerator.Generate()
+            let providersDummy = ProviderGenerator.Generate(10)
             for l in providersDummy do
-               addProvider l |> printfn "%A"
+               try
+                   addProvider l |> ignore
+               with
+                    ex -> ex.Message |> ignore
+            "\nProviders inserted into database\n" |> printfn "%s"
+            displayAllProviders |> printfn "%s"
 
             // Insert dummy data for Currency
-            let currencyDummy = CurrencyGenerator.Generate()
+            let currencyDummy = CurrencyGenerator.Generate(10)
             for l in currencyDummy do
-               addCurrency l |> printfn "%A"
-            *)
+                try
+                    addCurrency l |> ignore
+                with
+                    ex -> ex.Message |> ignore
+
+            //"\nCurrencies inserted into database\n" |> printfn "%s"
+            //displayAllCurrencies |> printfn "%s"
+
+            // Insert dummy data for CurrencyPair
+            let currencyPairDummy = CurrencyPairGenerator.Generate(100)
+            for l in currencyPairDummy do
+                try
+                    addCurrencyPair l |> ignore
+                with
+                    ex -> ex.Message |> ignore
+
+            //"\nCurrencyPairs inserted into database\n" |> printfn "%s"
+            //displayAllCurrencyPairs |> printfn "%s"
+
+            // Insert dummy data for RateRecord
+            let rateRecordDummy = RateRecordGenerator.Generate(300)
+            for l in rateRecordDummy do
+                try
+                    addRateRecord l |> ignore
+                with
+                    ex -> ex.Message |> ignore //printf "%s"
+
+            //"\nRateRecords inserted into database\n" |> printfn "%s"
+            //displayAllRateRecord |> printfn "%s"
+
         else
             printfn "%s" "Invalid option."
             let usage = parser.PrintUsage()

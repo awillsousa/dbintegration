@@ -135,20 +135,20 @@ let excludeProvider id =
         | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
-
+(*
 // <!!!CAUTION!!!> Exclude all Provider rows in the database
 let excludeAllProviders =
     try
         let result = match delAllProviders with
                         | None -> createResponseRecord("error", "No data deleted!", null)
-                        | _ -> createResponseRecord("ok", "All Providers deleted!", None)
+                        | _ -> createResponseRecord("ok", "All Currencies deleted!", None)
         serializeResult(result)
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
-
+*)
 (******************************)
 (* Currency related functions *)
 (******************************)
@@ -233,6 +233,7 @@ let excludeCurrency id =
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
+(*
 // <!!!CAUTION!!!> Exclude all Currency rows in the database
 let excludeAllCurrencies =
     try
@@ -245,7 +246,7 @@ let excludeAllCurrencies =
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
-
+*)
 (**********************************)
 (* CurrencyPair related functions *)
 (**********************************)
@@ -324,6 +325,7 @@ let excludeCurrencyPair id =
         | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
+(*
 // <!!!CAUTION!!!> Exclude all CurrencyPair rows in the database
 let excludeAllCurrencyPairs =
     try
@@ -336,7 +338,7 @@ let excludeAllCurrencyPairs =
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
-
+*)
 
 (********************************)
 (* RateRecord related functions *)
@@ -448,7 +450,7 @@ let excludeRateRecord id =
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
-
+(*
 // <!!!CAUTION!!!> Exclude all RateRecord rows in the database
 let excludeAllRateRecords =
     try
@@ -461,7 +463,7 @@ let excludeAllRateRecords =
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
-
+*)
 
 (*********************************)
 (* TradeRecord related functions *)
@@ -545,17 +547,18 @@ let excludeTradeRecord id =
         | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
 
-
+(*
 // <!!!CAUTION!!!> Exclude all TradeRecord rows in the database
 let excludeAllTradeRecords =
     try
-        //let result = match delAllTradeRecords with
-        let result = match delAllTradeRecords with
+        let p = delAllTradeRecords
+        let result = match p with
                         | None -> createResponseRecord("error", "No data deleted!", null)
-                        | _ -> createResponseRecord("ok", "All TradeRecords deleted!", None)
+                        | _ -> createResponseRecord("ok", "All RateRecords deleted!", None)
         serializeResult(result)
     with
         | :? System.InvalidOperationException as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.Data.DataException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | :? System.ArgumentException  as ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
         | ex -> serializeResult(createResponseRecord("exception", ex.Message, None))
+*)

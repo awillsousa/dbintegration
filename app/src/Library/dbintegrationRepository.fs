@@ -46,12 +46,10 @@ module dbintegrationRepository =
         result
 
     let deleteAllProviders (context: dbintegrationContext) =
-        context.Database.ExecuteSqlRaw("TRUNCATE TABLE PROVIDER CASCADE;") |> ignore
+        context.Database.ExecuteSqlRaw("TRUNCATE TABLE PROVIDER CASCADE;") |> ignore // printfn "%A"
         let result = context.SaveChanges true
         let result = if result >= 1  then Some(result) else None
         result
-
-
 
 
     (************************************)
@@ -249,7 +247,7 @@ module dbintegrationRepository =
         result
 
     let deleteAllTradeRecords (context: dbintegrationContext) =
-        context.Database.ExecuteSqlRaw("TRUNCATE TABLE TRADERECORD CASCADE;") |> ignore
+        context.Database.ExecuteSqlRaw("TRUNCATE TABLE TRADERECORD CASCADE;") |> printfn "%A"
         let result = context.SaveChanges true
         let result = if result >= 1  then Some(result) else None
         result
