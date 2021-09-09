@@ -16,4 +16,7 @@
     <ProjectReference Include="..\Library\Library.fsproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
 </Project>

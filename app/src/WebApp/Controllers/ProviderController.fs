@@ -7,7 +7,9 @@ open System.Threading.Tasks
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
 //open WebApp
+open Newtonsoft.Json
 open Library
+//open DBILib
 
 [<ApiController>]
 [<Route("api/[controller]")>]
@@ -18,11 +20,11 @@ type ProviderController (logger : ILogger<ProviderController>) =
     [<HttpGet>]
     member _.Get() =
         let providers = allProviders
-        let result = [| providers |]
-        ActionResult<string[]>(result)
+        let result = JsonConvert.DeserializeObject<ResultData>(providers)
+        ActionResult<ResultData>(result)
 
     [<HttpGet("id")>]
     member _.Get(id: int) =
         let provider = findProvider (int64(id))
-        let result = [| provider |]
-        ActionResult<string[]>(result)
+        let result = JsonConvert.DeserializeObject<ResultData>(provider)
+        ActionResult<ResultData>(result)
