@@ -38,10 +38,8 @@ There is a easy option, that using scripts:
 `./scripts/start_db.sh` for database and PgAdmin interface
 `./scripts/start_app.sh` for F# API and application
 
-run_cli_load_data.sh
-run_cli_show_data.sh
-start_app.sh
-start_db.sh
+When running the Application (App) or Web Application (WebApp) for the first time, do not forget
+to configure the .env file with the database string connection. 
 
 
 #### Execution
@@ -53,5 +51,6 @@ To test the API, just use curl or some application like Insomnia or Postman.
 
 #### Examples of Use
 
-TODO 
+Retrieve all providers
+`curl -k https://localhost:5001/api/provider`
 

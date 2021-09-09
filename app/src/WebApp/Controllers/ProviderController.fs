@@ -20,11 +20,9 @@ type ProviderController (logger : ILogger<ProviderController>) =
     [<HttpGet>]
     member _.Get() =
         let providers = allProviders
-        let result = JsonConvert.DeserializeObject<ResultData>(providers)
-        ActionResult<ResultData>(result)
+        ActionResult<string>(providers)
 
     [<HttpGet("id")>]
     member _.Get(id: int) =
         let provider = findProvider (int64(id))
-        let result = JsonConvert.DeserializeObject<ResultData>(provider)
-        ActionResult<ResultData>(result)
+        ActionResult<string>(provider)
