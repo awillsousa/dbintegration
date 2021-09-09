@@ -22,7 +22,7 @@ type ProviderController (logger : ILogger<ProviderController>) =
         let providers = allProviders
         ActionResult<string>(providers)
 
-    [<HttpGet("id")>]
+    [<HttpGet("/{id}")>]
     member _.Get(id: int) =
         let provider = findProvider (int64(id))
         ActionResult<string>(provider)
